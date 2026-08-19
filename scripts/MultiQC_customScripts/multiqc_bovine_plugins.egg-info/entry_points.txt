@@ -1,0 +1,8 @@
+[multiqc.modules.v1]
+contamination_filter = multiqc_plugins.contamination_filter:MultiqcModule
+genome_alignment_custom = multiqc_plugins.genome_alignment_custom:MultiqcModule
+mirdeep2_custom = multiqc_plugins.mirdeep2_custom:MultiqcModule
+mirna_detection = multiqc_plugins.mirna_detection:MultiqcModule
+pirna_detection = multiqc_plugins.pirna_detection:MultiqcModule
+snorna_detection = multiqc_plugins.snorna_detection:MultiqcModule
+snrna_detection = multiqc_plugins.snrna_detection:MultiqcModule

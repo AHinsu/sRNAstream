@@ -1,0 +1,135 @@
+# =============================================================================
+# multiqc_config.yaml – Custom MultiQC configuration for bovine small RNA pipeline
+#
+# Loaded via:  multiqc --config <path>/multiqc_config.yaml ...
+# Custom modules are registered as multiqc.modules.v1 entry points via
+# MultiQC_customScripts/pyproject.toml (pip install -e MultiQC_customScripts/).
+#
+# Section order mirrors the pipeline phases:
+#   Phase I   – FastQC (raw), Cutadapt, fastp, FastQC (cleaned)
+#   Phase I.5 – Contamination filtering (custom module)
+#   Phase I.6 – miRTrace
+#   Phase III – Genome alignment (custom module)
+#   Phase IV  – miRDeep2 (custom module)
+#   Phase V   – miRNA detection (custom module)
+#   Phase VI  – snRNA, snoRNA, piRNA detection (custom modules, one section each)
+# =============================================================================
+
+title: "microRNA Pipeline – Comprehensive QC Report"
+subtitle: "Aggregated from all pipeline phases (I–VI)"
+intro_text: >
+  Comprehensive quality control and analysis metrics for the bovine small RNA
+  sequencing pipeline. Sections follow the processing order: raw QC →
+  adapter trimming → quality filtering → cleaned QC → contamination removal →
+  miRTrace → genome alignment → miRDeep2 discovery → miRNA quantification →
+  snRNA / snoRNA / piRNA quantification.
+
+# ---------------------------------------------------------------------------
+# Module execution order
+# Each entry maps to a module name (built-in or from --module-dir).
+# path_filters restrict which files each built-in module picks up so that
+# raw and cleaned FastQC results appear in separate named sections.
+# ---------------------------------------------------------------------------
+module_order:
+  - fastqc:
+      name: "FastQC – Raw Reads"
+      anchor: "fastqc_raw"
+      path_filters:
+        - "*/fastqc/raw/*_fastqc.zip"
+
+  - cutadapt:
+      name: "Cutadapt – Adapter Trimming"
+      path_filters:
+        - "*/cutadapt/*_cutadapt.json"
+
+  - fastp:
+      name: "fastp – Quality Filtering"
+      path_filters:
+        - "*/fastp/*_fastp.json"
+
+  - fastqc:
+      name: "FastQC – Cleaned Reads"
+      anchor: "fastqc_cleaned"
+      path_filters:
+        - "*/fastqc/cleaned/*_fastqc.zip"
+
+  - contamination_filter
+
+  - mirtrace
+
+  - genome_alignment_custom
+
+  - mirdeep2_custom
+
+  - mirna_detection
+
+  - snrna_detection
+
+  - snorna_detection
+
+  - pirna_detection
+
+# ---------------------------------------------------------------------------
+# Search patterns for custom modules
+# Keys must match the sp_key strings used in each module's find_log_files() call.
+# ---------------------------------------------------------------------------
+sp:
+  contamination_filter/stats:
+    fn: "*_contamination_stats.txt"
+    contents: "Contamination Filtering Statistics"
+
+  genome_alignment_custom/stats:
+    fn: "all_samples_alignment_stats.tsv"
+    contents: "pct_mapped"
+
+  mirdeep2_custom/all:
+    fn: "mirdeep2_all.tsv"
+    contents: "provisional_id"
+
+  mirna_detection/stats:
+    fn: "*_mirna_stats.txt"
+    contents: "miRNA Quantification Statistics"
+
+  snrna_detection/stats:
+    fn: "*_snrna_stats.txt"
+    contents: "snRNA Quantification Statistics"
+
+  snorna_detection/stats:
+    fn: "*_snorna_stats.txt"
+    contents: "snoRNA Quantification Statistics"
+
+  pirna_detection/stats:
+    fn: "*_pirna_stats.txt"
+    contents: "piRNA Quantification Statistics"
+
+    
+# ---------------------------------------------------------------------------
+# Prevent built-in Bowtie / aligner modules from picking up pipeline logs
+# ---------------------------------------------------------------------------
+exclude_modules:
+  - bowtie
+  - bowtie2
+  - star
+  - hisat2
+  - salmon
+  - kallisto
+
+# ---------------------------------------------------------------------------
+# Sample name cleaning
+# Strip these suffixes from sample names derived from file names so that
+# e.g. "sample_cutadapt.log" appears as "sample" across all modules.
+# ---------------------------------------------------------------------------
+fn_clean_trim:
+  - "_cutadapt"
+  - "_trimmed"
+
+  
+# ---------------------------------------------------------------------------
+# General report settings
+# ---------------------------------------------------------------------------
+max_table_rows: 1000
+export_plots: false
+plots_force_flat: false
+log_filesize_limit: 50000000
+sample_names_replace_exact: True
+

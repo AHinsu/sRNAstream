@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multiqc-bovine-plugins"
+version = "1.0.0"
+description = "Custom MultiQC modules for the bovine microRNA pipeline"
+requires-python = ">=3.8"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["multiqc_plugins*"]
+
+# Register each custom module under the entry-point group that MultiQC v1.21+
+# uses to discover third-party modules (replaces the removed --module-dir flag).
+[project.entry-points."multiqc.modules.v1"]
+contamination_filter      = "multiqc_plugins.contamination_filter:MultiqcModule"
+genome_alignment_custom   = "multiqc_plugins.genome_alignment_custom:MultiqcModule"
+mirdeep2_custom           = "multiqc_plugins.mirdeep2_custom:MultiqcModule"
+mirna_detection           = "multiqc_plugins.mirna_detection:MultiqcModule"
+snrna_detection           = "multiqc_plugins.snrna_detection:MultiqcModule"
+snorna_detection          = "multiqc_plugins.snorna_detection:MultiqcModule"
+pirna_detection           = "multiqc_plugins.pirna_detection:MultiqcModule"
