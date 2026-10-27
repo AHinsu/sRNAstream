@@ -1,3 +1,5 @@
+[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.23689351-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.23689351) 
+
 # sRNAstream: small RNA Analysis Pipeline
 
 A comprehensive, species-agnostic pipeline for small RNA sequencing analysis with focus on microRNA discovery and quantification. Designed for SLURM-based HPC environments.
